@@ -1,14 +1,23 @@
 /*
 Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
-	"fmt"
+	"errors"
 
+	"github.com/asaskevich/govalidator"
+	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 )
+
+var validate = func(input string) error {
+	if govalidator.IsDNSName(input) {
+		return nil
+	}
+
+	return errors.New("Invalid domain name")
+}
 
 // addCmd represents the add command
 var addCmd = &cobra.Command{
@@ -21,7 +30,11 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("add called")
+		prompt := promptui.Prompt{
+			Label: "Host",
+			Validate: validate,
+		}
+		prompt.Run()
 	},
 }
 
